@@ -64,3 +64,6 @@ Now map HTTP track to methods.
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+[http_router]: https://github.com/joshbuddy/http_router
+[rack]: https://github.com/rack/rack
