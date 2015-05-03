@@ -63,9 +63,18 @@ module Barcelona
       super [ data.to_s ]
     end
 
+    def content_type=(value)
+      self.headers['Content-Type'] = value
+    end
+
     def json=(object)
       self.body = JSON.dump object
-      self.headers['Content-Type'] = 'application/json'
+      self.content_type = 'application/json'
+    end
+
+    def html=(text)
+      self.body = text
+      self.content_type = 'text/html'
     end
   end
 
@@ -140,6 +149,10 @@ module Barcelona
           fail MappingError, name
         end
       end
+    end
+
+    def static(path, directory)
+      router.add(path).static(directory)
     end
 
     private

@@ -155,4 +155,43 @@ class TestBarcelona < Minitest::Test
     assert_equal 200, last_response.status
     assert_equal 'bar', last_response.body, 'JSON handled incorrectly'
   end
+
+  def test_html_response
+    processor = Class.new do
+      define_method :foo_test do |request|
+        Barcelona::Response.ok do |response|
+          response.html = '<foo>'
+        end
+      end
+    end
+
+    @app = Barcelona::Mapper.new processor.new do |http|
+      http.get '/foo', :foo_test
+    end
+
+    get '/foo'
+
+    assert_equal 200, last_response.status
+    assert_match /text\/html/, last_response.content_type, 'Incorrect content type'
+    assert_equal '<foo>', last_response.body
+  end
+
+  def test_serving_static_files
+    Dir.mktmpdir do |scratch|
+      File.open File.join(scratch, 'foo.txt'), 'w' do |foo|
+        foo.write 'bar'
+      end
+
+      processor = Class.new
+
+      @app = Barcelona::Mapper.new processor.new do |http|
+        http.static '/public', scratch
+      end
+
+      get '/public/foo.txt'
+
+      assert_equal 200, last_response.status
+      assert_equal 'bar', last_response.body
+    end
+  end
 end
